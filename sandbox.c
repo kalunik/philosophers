@@ -35,8 +35,8 @@ int	main(int argc, char **argv)
 	}
 	for (i = 0; i < 4; i++)
 	{
-		//if (pthread_join(th[i], NULL))
-		//	return (2);
+		if (pthread_join(th[i], NULL))
+			return (2);
 		printf("Thread %d has finished\n", i);
 	}
 	pthread_mutex_destroy(&mutex);

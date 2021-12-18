@@ -20,20 +20,30 @@
 # include <sys/time.h> //gettimeofday
 # include <pthread.h>//pthread_create|detach|join,mutex_init|destroy|lock|unlock
 
+
 typedef struct s_args{
-	int	numb_of_philos;
+	int	id;
 	int	time_to_die;
 	int	time_to_eat;
 	int	time_to_sleep;
 	int	required_meals;
+	int start_pr;
+	int last_eat;
+	pthread_mutex_t *l_fork;
+	pthread_mutex_t *r_fork;
+	pthread_mutex_t *write_text;
+
 }				t_param;
 
 typedef struct s_main{
+	pthread_mutex_t	*fork;
+	pthread_mutex_t	write_text;
+	int		numb_of_philos;
 	t_param	*body;
 }				t_philos;
 
 int		ft_atoi(const char *str);
 
-void	parse_args(int argc, char **argv, t_philos	*all);
+int parse_args(int argc, char **argv, t_philos *all);
 
 #endif

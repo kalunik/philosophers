@@ -44,6 +44,6 @@ typedef struct s_main{
 
 int		ft_atoi(const char *str);
 
-int parse_args(int argc, char **argv, t_philos *all);
+int		init_philos(int argc, char **argv, t_philos *all);
 
 #endif

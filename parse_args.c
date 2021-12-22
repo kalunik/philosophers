@@ -36,7 +36,7 @@
 	return (EXIT_SUCCESS);
 }*/
 
-void	init_philos(t_philos	*all, int argc, char **argv,int i)
+void	parse_args(t_philos	*all, int argc, char **argv,int i)
 {
 	all->body[i].id = i + 1;
 	all->body[i].time_to_die = ft_atoi(argv[2]);
@@ -53,7 +53,7 @@ void	init_philos(t_philos	*all, int argc, char **argv,int i)
 	all->body[i].last_eat = 0;
 }
 
-int	parse_args(int argc, char **argv,t_philos	*all)
+int	init_philos(int argc, char **argv,t_philos	*all)
 {
 	int i;
 
@@ -77,7 +77,7 @@ int	parse_args(int argc, char **argv,t_philos	*all)
 	pthread_mutex_init(&all->write_text, NULL);
 	i = 0;
 	while (i < all->numb_of_philos)
-		init_philos(all, argc, argv, i++);
+		parse_args(all, argc, argv, i++);
 	if (all->numb_of_philos < 1 || all->body->time_to_die < 0 ||
 		all->body->time_to_eat < 0 || all->body->time_to_sleep < 0 ||
 		all->body->required_meals < 0)

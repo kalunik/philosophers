@@ -23,38 +23,40 @@ long get_time(void)
 	return (ms);
 }
 
-void	*philo_life(void	*arg)
-{
-	t_philos	*all;
-
-	all = arg;
-
-	//pthread_mutex_init(&all->body->write_text, NULL);
-	for (int i = 0; i < all->body->time_to_eat; i++)
-	{
-		//pthread_mutex_lock(&all->body->write_text);
-		printf("fdsmjfg");
-		//printf("[%d]	%d -- eating\n", i, all->body->numb_of_philos);
-		//pthread_mutex_unlock(&all->body->write_text);
-	}
-	return NULL;
-}
+//void	*philo_life(void	*arg)
+//{
+//	t_philos	*all;
+//
+//	all = arg;
+//
+//	//pthread_mutex_init(&all->body->write_text, NULL);
+//	for (int i = 0; i < all->body->time_to_eat; i++)
+//	{
+//		//pthread_mutex_lock(&all->body->write_text);
+//		printf("fdsmjfg");
+//		//printf("[%d]	%d -- eating\n", i, all->body->numb_of_philos);
+//		//pthread_mutex_unlock(&all->body->write_text);
+//	}
+//	return NULL;
+//}
 
 
 
 int	main(int argc, char **argv)
 {
+	int			i;
 	t_philos	all;
 
 //	if(parse_args(argc, argv, &all) == EXIT_FAILURE)
 //		return (EXIT_FAILURE);
-	create_philos( argc, argv, &all);
-	int i =0;
-	while (i < all.numb_of_philos)
-	{
-		printf("%d %d\n", all.body[i].l_fork, all.body[i].r_fork);
-		i++;
-	}
+	init_philos(argc, argv, &all);
+
+//	i = 0;
+//	while (i < all.numb_of_philos)
+//	{
+//		printf("%d %d\n", all.body[i].l_fork, all.body[i].r_fork);
+//		i++;
+//	}
 	return (0);
 }
 

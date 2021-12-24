@@ -53,7 +53,7 @@ void	parse_args(t_philos	*all, int argc, char **argv,int i)
 	all->body[i].last_eat = 0;
 }
 
-int	init_philos(int argc, char **argv,t_philos	*all)
+int	init_philos(int argc, char **argv, t_philos	*all)
 {
 	int i;
 

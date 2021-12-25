@@ -20,6 +20,14 @@
 # include <sys/time.h> //gettimeofday
 # include <pthread.h>//pthread_create|detach|join,mutex_init|destroy|lock|unlock
 
+# define TAKE_FORK_L "has taken a fork L\n"
+# define TAKE_FORK_R "has taken a fork R\n"
+# define EAT "is eating\n"
+# define SLEEP "is sleeping\n"
+# define THINK "is thinking\n"
+# define DIE "died\n"
+# define DIE_TEXT_SIZE 5
+
 
 typedef struct s_args{
 	int				id;
@@ -27,11 +35,13 @@ typedef struct s_args{
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				required_meals;
-	int 			start_pr;
-	int 			last_eat;
+	long 			start_time;
+	long 			last_eat;
+	int				alive;
 	pthread_mutex_t *l_fork;
 	pthread_mutex_t *r_fork;
 	pthread_mutex_t *write_text;
+	pthread_t		philo_t;
 }				t_param;
 
 typedef struct s_main{
@@ -40,6 +50,8 @@ typedef struct s_main{
 	int				numb_of_philos;
 	t_param			*body;
 }					t_philos;
+
+long get_time(void);
 
 int		ft_atoi(const char *str);
 

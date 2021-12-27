@@ -20,13 +20,16 @@
 # include <sys/time.h> //gettimeofday
 # include <pthread.h>//pthread_create|detach|join,mutex_init|destroy|lock|unlock
 
-# define TAKE_FORK_L "has taken a fork L\n"
-# define TAKE_FORK_R "has taken a fork R\n"
-# define EAT "is eating\n"
-# define SLEEP "is sleeping\n"
-# define THINK "is thinking\n"
-# define DIE "died\n"
-# define DIE_TEXT_SIZE 5
+# define TAKE_FORK_L "has taken a fork L"
+# define TAKE_FORK_R "has taken a fork R"
+# define EAT "is eating"
+# define SLEEP "is sleeping"
+# define THINK "is thinking"
+# define DIE "died"
+# define TAKE_FORK_TEXT_SIZE 18
+# define EAT_TEXT_SIZE 9
+# define DIE_TEXT_SIZE 4
+# define UNUSED_TEXT_SIZE 11
 
 
 typedef struct s_args{
@@ -37,6 +40,7 @@ typedef struct s_args{
 	int				required_meals;
 	long 			start_time;
 	long 			last_eat;
+	int				meal_counter;
 	int				alive;
 	pthread_mutex_t *l_fork;
 	pthread_mutex_t *r_fork;

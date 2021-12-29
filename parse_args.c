@@ -36,10 +36,10 @@
 	return (EXIT_SUCCESS);
 }*/
 
-void	parse_args(t_philos	*all, int argc, char **argv,int i)
+void	parse_args(t_philos	*all, int argc, char **argv, int i)
 {
+	memset((void *)&all->body[i], 0, sizeof(t_param));
 	all->body[i].id = i + 1;
-	//printf("i - %d || id -- %d!!!\n", i, all->body[i].id);
 	all->body[i].time_to_die = ft_atoi(argv[2]);
 	all->body[i].time_to_eat = ft_atoi(argv[3]);
 	all->body[i].time_to_sleep = ft_atoi(argv[4]);
@@ -48,8 +48,6 @@ void	parse_args(t_philos	*all, int argc, char **argv,int i)
 	else
 		all->body[i].required_meals = -1;
 	all->body[i].last_eat = get_time();
-	all->body[i].meal_counter = 0;
-	all->body[i].alive = 0;
 	all->body[i].l_fork = &all->fork[i];
 	all->body[i].r_fork = &all->fork[(i + 1) % all->numb_of_philos];
 	all->body[i].write_text = &all->write_text;
@@ -57,9 +55,7 @@ void	parse_args(t_philos	*all, int argc, char **argv,int i)
 
 int	init_philos(int argc, char **argv, t_philos	*all)
 {
-	int i;
-
-
+	int	i;
 
 	if (!(argc == 5 || argc == 6))
 	{
@@ -70,8 +66,8 @@ int	init_philos(int argc, char **argv, t_philos	*all)
 	all->body = (t_param *) malloc(sizeof(t_param) * all->numb_of_philos);
 	if (all->body == NULL)
 		return (EXIT_FAILURE);
-	all->fork = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) *
-										   all->numb_of_philos);
+	all->fork = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t)
+			* all->numb_of_philos);
 	i = 0;
 	while (i < all->numb_of_philos)
 		pthread_mutex_init(&all->fork[i++], NULL);
@@ -82,9 +78,9 @@ int	init_philos(int argc, char **argv, t_philos	*all)
 		parse_args(all, argc, argv, i);
 		i++;
 	}
-	if (all->numb_of_philos < 1 || all->body->time_to_die < 0 ||
-		all->body->time_to_eat < 0 || all->body->time_to_sleep < 0 ||
-		all->body->required_meals < 0)
+	if (all->numb_of_philos < 1 || all->body->time_to_die < 0
+		|| all->body->time_to_eat < 0 || all->body->time_to_sleep < 0
+		|| all->body->required_meals < 0)
 		return (EXIT_FAILURE);
-	return (0);
+	return (EXIT_SUCCESS);
 }

@@ -1,6 +1,6 @@
 CC	=	gcc
 RM	=	rm -f
-CFLAGS	=	-I./includes #-Wall -Wextra -Werror
+CFLAGS	=	-I./includes -ggdb3 -fsanitize=address #-Wall -Wextra -Werror
 NAME	=	philo
 SRCS	=	main.c \
             ft_atoi.c \

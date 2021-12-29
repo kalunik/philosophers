@@ -31,20 +31,19 @@
 # define DIE_TEXT_SIZE 4
 # define UNUSED_TEXT_SIZE 11
 
-
 typedef struct s_args{
 	int				id;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				required_meals;
-	long 			start_time;
-	long 			last_eat;
+	long			start_time;
+	long			last_eat;
 	int				meal_counter;
 	int				alive;
-	pthread_mutex_t *l_fork;
-	pthread_mutex_t *r_fork;
-	pthread_mutex_t *write_text;
+	pthread_mutex_t	*l_fork;
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	*write_text;
 	pthread_t		philo_t;
 }				t_param;
 
@@ -55,7 +54,7 @@ typedef struct s_main{
 	t_param			*body;
 }					t_philos;
 
-long get_time(void);
+long	get_time(void);
 
 int		ft_atoi(const char *str);
 

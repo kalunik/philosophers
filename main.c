@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-long get_time(void)
+long	get_time(void)
 {
 	struct timeval	tp;
 	long			ms;
@@ -23,7 +23,7 @@ long get_time(void)
 	return (ms);
 }
 
-void ft_msleep(long ms)
+void	ft_msleep(long ms)
 {
 	long	begin;
 
@@ -43,7 +43,7 @@ size_t	ft_strlen(const char *s)
 	return (len);
 }
 
-void message(t_param *philo, const char *text)
+void	message(t_param *philo, const char *text)
 {
 	size_t	text_size;
 
@@ -56,43 +56,40 @@ void message(t_param *philo, const char *text)
 		printf("\033[1;34m");
 	else if (text_size == DIE_TEXT_SIZE)
 		printf("\033[1;31m");
-	printf(" %d %s\n",philo->id, text);
+	printf(" %d %s\n", philo->id, text);
 	if (text_size != UNUSED_TEXT_SIZE)
 		printf("\033[0m");
 	if (ft_strlen(text) != DIE_TEXT_SIZE)
 		pthread_mutex_unlock(philo->write_text);
 }
 
-void eating(t_param	*philo)
+void	eating(t_param	*philo)
 {
 	pthread_mutex_lock(philo->l_fork);
 	message(philo, TAKE_FORK_L);
-
 	pthread_mutex_lock(philo->r_fork);
 	message(philo, TAKE_FORK_R);
-
 	message(philo, EAT);
 	ft_msleep(philo->time_to_eat);
 	philo->last_eat = get_time();
-
 	if (philo->required_meals != -1)
 		philo->meal_counter++;
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
 }
 
-void sleeping(t_param	*philo)
+void	sleeping(t_param	*philo)
 {
 	message(philo, SLEEP);
 	ft_msleep(philo->time_to_sleep);
 }
 
-void thinking(t_param	*philo)
+void	thinking(t_param	*philo)
 {
 	message(philo, THINK);
 }
 
-void *life(void *args)
+void	*life(void *args)
 {
 	t_param	*philo;
 
@@ -108,35 +105,28 @@ void *life(void *args)
 	return (NULL);
 }
 
-int monitor(t_philos *all)
+int	monitor(t_philos *all)
 {
 	int	i;
-	int count = 0;
+	int	count;
+
 	i = 0;
+	count = 0;
 	while (1)
 	{
 		while (i < all->numb_of_philos)
 		{
 			if (all->body[i].alive == 0 && get_time() - all->body[i].last_eat
-			>= all->body[i].time_to_die)
+				>= all->body[i].time_to_die)
 			{
 				all->body[i].alive = 1;
 				message(&all->body[i], DIE);
 				return (EXIT_SUCCESS);
 			}
-			if (all->body[i].meal_counter >= all->body->required_meals &&
-			all->body->required_meals != -1)
+			if (all->body[i].meal_counter >= all->body->required_meals
+				&& all->body->required_meals != -1)
 			{
 				count++;
-				int j = 0;
-				pthread_mutex_lock(&all->write_text);
-				while (j < all->numb_of_philos)
-				{
-					printf(" %d - ", all->body[j].meal_counter);
-					j++;
-				}
-				printf("\n");
-				pthread_mutex_unlock(&all->write_text);
 				if (count == all->numb_of_philos)
 					return (EXIT_SUCCESS);
 			}
@@ -147,7 +137,7 @@ int monitor(t_philos *all)
 	}
 }
 
-int born_philos(t_philos	*all)
+int	born_philos(t_philos	*all)
 {
 	int	i;
 	int	bool;
@@ -172,31 +162,34 @@ int born_philos(t_philos	*all)
 	return (bool);
 }
 
+void	end_threads(t_philos	*all)
+{
+	int	i;
+
+	i = 0;
+	while (i < all->numb_of_philos)
+	{
+		pthread_mutex_destroy(&all->fork[i]);
+		i++;
+	}
+	pthread_mutex_destroy(&all->write_text);
+	free(all->body);
+	free(all->fork);
+	free(all);
+}
+
 int	main(int argc, char **argv)
 {
 	int			i;
 	t_philos	*all;
 	int			exit_code;
 
-//	if(parse_args(argc, argv, &philo) == EXIT_FAILURE)
-//		return (EXIT_FAILURE);
 	all = malloc(sizeof(t_philos));
 	if (!all)
 		return (EXIT_FAILURE);
-	init_philos(argc, argv, all); //todo проверка входящих значений на
-	// валидность
-
-//	i = 0;
-//	while (i < all->numb_of_philos) ///посмотреть форки
-//	{
-//		printf("%d %d\n", all->body[i].l_fork, all->body[i]
-//		.r_fork);
-//		i++;
-//	}
-
-	exit_code = born_philos(all); //todo free, destroy mutex
-	//printf("exit code!! %d\n", exit_code);
+	if (init_philos(argc, argv, all) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	exit_code = born_philos(all);
+	end_threads(all);
 	return (exit_code);
 }
-
-

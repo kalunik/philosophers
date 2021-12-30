@@ -54,10 +54,16 @@ typedef struct s_main{
 	t_param			*body;
 }					t_philos;
 
-long	get_time(void);
-
 int		ft_atoi(const char *str);
 
+void	message(t_param *philo, const char *text);
+void	*life(void *args);
+
 int		init_philos(int argc, char **argv, t_philos *all);
+
+long	get_time(void);
+void	ft_msleep(long ms);
+size_t	ft_strlen(const char *s);
+void	end_threads(t_philos	*all);
 
 #endif

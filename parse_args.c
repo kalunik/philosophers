@@ -12,30 +12,6 @@
 
 #include "philo.h"
 
-/*int parse_args(int argc, char **argv, t_philos *all)
-{
-	all->body = malloc(sizeof(t_param));
-	if (!all->body)
-		return (EXIT_FAILURE);
-	if (!(argc == 5 || argc == 6))
-	{
-		printf("Give me 4 or 5 arguments\n");
-		return (EXIT_FAILURE);
-	}
-	memset((void *)all->body, 0, sizeof(t_param));
-//	all->numb_of_philos = ft_atoi(argv[1]);
-//	all->body->time_to_die = ft_atoi(argv[2]);
-//	all->body->time_to_eat = ft_atoi(argv[3]);
-//	all->body->time_to_eat = ft_atoi(argv[4]);
-//	if (argc == 6)
-//		all->body->required_meals = ft_atoi(argv[5]);
-	if (all->numb_of_philos < 1 || all->body->time_to_die < 0 ||
-			all->body->time_to_eat < 0 || all->body->time_to_sleep < 0 ||
-			all->body->required_meals < 0)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
-}*/
-
 void	parse_args(t_philos	*all, int argc, char **argv, int i)
 {
 	memset((void *)&all->body[i], 0, sizeof(t_param));
@@ -53,13 +29,25 @@ void	parse_args(t_philos	*all, int argc, char **argv, int i)
 	all->body[i].write_text = &all->write_text;
 }
 
+static inline int	validate_params(int argc, t_philos	*all)
+{
+	if (all->numb_of_philos < 1 || all->body->time_to_die < 0
+		|| all->body->time_to_eat < 0 || all->body->time_to_sleep < 0
+		|| (argc == 6 && all->body->required_meals < 0))
+	{
+		printf("Invalid args\n");
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
 int	init_philos(int argc, char **argv, t_philos	*all)
 {
 	int	i;
 
 	if (!(argc == 5 || argc == 6))
 	{
-		printf("Give me 4 or 5 arguments\n");
+		printf("There should be 4 or 5 arguments\n");
 		return (EXIT_FAILURE);
 	}
 	all->numb_of_philos = ft_atoi((argv[1]));
@@ -69,18 +57,13 @@ int	init_philos(int argc, char **argv, t_philos	*all)
 	all->fork = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t)
 			* all->numb_of_philos);
 	i = 0;
-	while (i < all->numb_of_philos)
-		pthread_mutex_init(&all->fork[i++], NULL);
 	pthread_mutex_init(&all->write_text, NULL);
-	i = 0;
 	while (i < all->numb_of_philos)
 	{
-		parse_args(all, argc, argv, i);
-		i++;
+		pthread_mutex_init(&all->fork[i], NULL);
+		parse_args(all, argc, argv, i++);
 	}
-	if (all->numb_of_philos < 1 || all->body->time_to_die < 0
-		|| all->body->time_to_eat < 0 || all->body->time_to_sleep < 0
-		|| all->body->required_meals < 0)
+	if (validate_params(argc, all))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }

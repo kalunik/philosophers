@@ -1,10 +1,12 @@
 CC	=	gcc
 RM	=	rm -f
-CFLAGS	=	-I./includes -ggdb3 -fsanitize=address #-Wall -Wextra -Werror
+CFLAGS	=	-I./includes -Wall -Wextra -Werror
 NAME	=	philo
-SRCS	=	main.c \
+SRCS	=	philo.c \
             ft_atoi.c \
+            life_cycle.c \
             parse_args.c \
+            utils.c
 
 OBJS	=	$(patsubst %.c, %.o, $(SRCS))
 

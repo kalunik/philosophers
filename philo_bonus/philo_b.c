@@ -85,7 +85,7 @@ int	main(int argc, char **argv)
 	all = malloc(sizeof(t_philos));
 	if (!all)
 		return (EXIT_FAILURE);
-	if (init_philos(argc, argv, all) == EXIT_FAILURE)
+	if (init_philos(argc, argv, all) == EXIT_FAILURE) ///
 		return (EXIT_FAILURE);
 	exit_code = born_philos(all);
 	end_threads(all);

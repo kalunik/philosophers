@@ -18,7 +18,9 @@
 # include <stdlib.h> //malloc free
 # include <unistd.h> //write usleep
 # include <sys/time.h> //gettimeofday
-# include <pthread.h>//pthread_create|detach|join,mutex_init|destroy|lock|unlock
+//todo delete pthread
+# include <pthread.h>///pthread_create|detach|join,mutex_init|destroy|lock|unlock
+# include <semaphore.h>
 
 # define TAKE_FORK_L "has taken a fork L"
 # define TAKE_FORK_R "has taken a fork R"

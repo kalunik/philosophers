@@ -24,8 +24,12 @@ void	parse_args(t_philos	*all, int argc, char **argv, int i)
 	else
 		all->body[i].required_meals = -1;
 	all->body[i].last_eat = get_time();
+
+	//todo вилка уже не назначается
 	all->body[i].l_fork = &all->fork[i];
 	all->body[i].r_fork = &all->fork[(i + 1) % all->numb_of_philos];
+
+	//todo сем на письмо
 	all->body[i].write_text = &all->write_text;
 }
 
@@ -54,18 +58,23 @@ int	init_philos(int argc, char **argv, t_philos	*all)
 	all->body = (t_param *) malloc(sizeof(t_param) * all->numb_of_philos);
 	if (all->body == NULL)
 		return (EXIT_FAILURE);
-	/// под семафор на кол-во вилок(филов)
-	all->fork = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t)
-			* all->numb_of_philos);
+	//todo под семафор на кол-во вилок(филов)
+	sem_init()
+//	all->fork = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t)
+//			* all->numb_of_philos);
+
 	i = 0;
-	/// семафор один на печать
+	
+	//todo семафор один на печать
 	pthread_mutex_init(&all->write_text, NULL);
-	/// семафор на кол-во филов
+
+	//todo семафор на кол-во филов
 	while (i < all->numb_of_philos)
 	{
 		pthread_mutex_init(&all->fork[i], NULL);
-		parse_args(all, argc, argv, i++);
+		parse_args(all, argc, argv, i++); ///
 	}
+
 	if (validate_params(argc, all))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);

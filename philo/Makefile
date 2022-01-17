@@ -1,6 +1,6 @@
 CC	=	gcc
 RM	=	rm -f
-CFLAGS	=	-I./includes -Wall -Wextra -Werror
+CFLAGS	=	-I. -Wall -Wextra -Werror
 NAME	=	philo
 SRCS	=	philo.c \
             ft_atoi.c \
@@ -17,23 +17,15 @@ $(NAME):	$(OBJS)
 			@$(CC) -o $(NAME) $(OBJS)
 			@echo "philo is ready to use ✅ "
 
-#bonus:
-#			@$(MAKE) -C $(LIBFT)
-#			@$(MAKE) $(B_NAME)
-#
-#$(B_NAME):	$(B_OBJS) $(LIBFT)/libft.a libft/libft.h
-#			@$(CC) -o $(B_NAME) $(B_OBJS)
-#			@echo "philo_bonus is ready to use ✅ "
-
-%.o: %.c	includes/so_long.h get_next_line/get_next_line.h
+%.o: %.c	philo.h
 			@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-			@$(RM)	$(OBJS) #$(B_OBJS)
+			@$(RM)	$(OBJS)
 			@echo ".o Deleted 🗿"
 
 fclean: 	clean
-			@$(RM)	 $(NAME) #$(B_NAME)
+			@$(RM)	 $(NAME)
 			@echo "Deleted 😬"
 
 re:			fclean all

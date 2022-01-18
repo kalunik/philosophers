@@ -12,6 +12,7 @@
 
 #include "philo_b.h"
 
+/*
 static inline int	is_alive(int i, t_philos *all)
 {
 	if (all->body[i].alive == 0 && get_time() - all->body[i].last_eat
@@ -50,6 +51,7 @@ int	monitor(t_philos *all)
 		count = 0;
 	}
 }
+*/
 
 int	born_philos(t_philos	*all)
 {
@@ -58,17 +60,43 @@ int	born_philos(t_philos	*all)
 
 	i = 0;
 	bool = EXIT_FAILURE;
+	printf("%p\n", &all->write_sem); //fixme неправильно приходит указательна семафор
 	while (i < all->numb_of_philos)
 	{
 		all->body[i].start_time = get_time();
-		pthread_create(&all->body[i].philo_t, NULL, life, &all->body[i]);
+		//pthread_create(&all->body[i].philo_t, NULL, life, &all->body[i]);
+		//todo на каждого философа процесс
+		all->body[i].pid = fork();
+		if (all->body[i].pid == -1)
+			exit(error("Child process isn't created\n"));
+//		printf("%d");
+		if (all->body[i].pid == 0)
+		{
+			printf("[son - %d] pid %d from [parent] pid %d\n",i, getpid(),
+				   getppid());
+			exit(life(all->body[i]));
+		}
 		i++;
 	}
-	bool = monitor(all);
+/*	bool = monitor(all);
 	i = 0;
 	while (i < all->numb_of_philos)
 	{
 		pthread_detach(all->body[i].philo_t);
+		i++;
+	}*/
+/*
+	waitpid(all->body[0].pid, NULL, 0);
+	waitpid(all->body[1].pid, NULL, 0);
+	waitpid(all->body[2].pid, NULL, 0);
+*/
+	i = 0;
+	while (i < all->numb_of_philos)
+	{
+
+		//kill();
+		wait(NULL);
+//		waitpid(all->body[i].pid, NULL, 0);
 		i++;
 	}
 	if (i != all->numb_of_philos)
@@ -88,6 +116,6 @@ int	main(int argc, char **argv)
 	if (init_philos(argc, argv, all) == EXIT_FAILURE) ///
 		return (EXIT_FAILURE);
 	exit_code = born_philos(all);
-	end_threads(all);
+//	end_threads(all);
 	return (exit_code);
 }

@@ -1,6 +1,6 @@
 CC	=	gcc
 RM	=	rm -f
-CFLAGS	=	-I. -Wall -Wextra -Werror
+CFLAGS	=	-I. -ggdb3 #-Wall -Wextra -Werror
 NAME_B	=	philo_bonus
 SRCS_B	=	philo_b.c \
             ft_atoi.c \

@@ -43,26 +43,31 @@ typedef struct s_args{
 	long			last_eat;
 	int				meal_counter;
 	int				alive;
-	pthread_mutex_t	*l_fork;
-	pthread_mutex_t	*r_fork;
-	pthread_mutex_t	*write_text;
-	pthread_t		philo_t;
+//	pthread_mutex_t	*l_fork;
+//	pthread_mutex_t	*r_fork;
+//	pthread_mutex_t	*write_text;
+//	pthread_t		philo_t;
+	pid_t			pid;
+	struct s_main	*all;
 }				t_param;
 
 typedef struct s_main{
-	pthread_mutex_t	*fork;
-	pthread_mutex_t	write_text;
+//	pthread_mutex_t	*fork;
+//	pthread_mutex_t	write_text;
 	int				numb_of_philos;
 	t_param			*body;
+	sem_t			*fork_sem;
+	sem_t			*write_sem;
 }					t_philos;
 
 int		ft_atoi(const char *str);
 
 void	message(t_param *philo, const char *text);
-void	*life(void *args);
+int		life(t_param philo);
 
 int		init_philos(int argc, char **argv, t_philos *all);
 
+int		error(char *msg);
 long	get_time(void);
 void	ft_msleep(long ms);
 size_t	ft_strlen(const char *s);

@@ -21,14 +21,14 @@
 //todo delete pthread
 # include <pthread.h>///pthread_create|detach|join,mutex_init|destroy|lock|unlock
 # include <semaphore.h>
+#include <signal.h>
 
-# define TAKE_FORK_L "has taken a fork L"
-# define TAKE_FORK_R "has taken a fork R"
+# define TAKE_FORK "has taken a fork"
 # define EAT "is eating"
 # define SLEEP "is sleeping"
 # define THINK "is thinking"
 # define DIE "died"
-# define TAKE_FORK_TEXT_SIZE 18
+# define TAKE_FORK_TEXT_SIZE 16
 # define EAT_TEXT_SIZE 9
 # define DIE_TEXT_SIZE 4
 # define UNUSED_TEXT_SIZE 11
@@ -47,6 +47,7 @@ typedef struct s_args{
 //	pthread_mutex_t	*r_fork;
 //	pthread_mutex_t	*write_text;
 //	pthread_t		philo_t;
+	pthread_t		monit_eat;
 	pid_t			pid;
 	struct s_main	*all;
 }				t_param;
@@ -58,6 +59,9 @@ typedef struct s_main{
 	t_param			*body;
 	sem_t			*fork_sem;
 	sem_t			*write_sem;
+	sem_t			*finish_sem;
+	sem_t			*eat_sem;
+	//pthread_t		monitor;
 }					t_philos;
 
 int		ft_atoi(const char *str);

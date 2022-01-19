@@ -20,8 +20,7 @@ void	message(t_param *philo, const char *text)
 
 	//todo семафор на текст
 	//pthread_mutex_lock(philo->write_text);
-	printf("%p\n", &philo->all->write_sem);
-
+	//	printf("%p\n", &philo->all->write_sem);
 	sem_wait(philo->all->write_sem);
 
 	printf("%ld", get_time() - philo->start_time);
@@ -34,33 +33,44 @@ void	message(t_param *philo, const char *text)
 	printf(" %d %s\n", philo->id, text);
 /*	if (text_size != UNUSED_TEXT_SIZE)
 		printf("\033[0m");
+
 	if (ft_strlen(text) != DIE_TEXT_SIZE)
 		pthread_mutex_unlock(philo->write_text);*/
 	sem_post(philo->all->write_sem);
-	printf("dsfdfdsfds\n");
 }
-//
-//void	eating(t_param	*philo)
-//{
+
+void	eating(t_param	*philo)
+{
 //	pthread_mutex_lock(philo->l_fork);
-//	message(philo, TAKE_FORK_L);
+	sem_wait(philo->all->fork_sem);
+
+	message(philo, TAKE_FORK);
+
 //	pthread_mutex_lock(philo->r_fork);
-//	message(philo, TAKE_FORK_R);
-//	message(philo, EAT);
-//	ft_msleep(philo->time_to_eat);
-//	philo->last_eat = get_time();
-//	if (philo->required_meals != -1)
-//		philo->meal_counter++;
+	sem_wait(philo->all->fork_sem);
+
+	message(philo, TAKE_FORK);
+	message(philo, EAT);
+	ft_msleep(philo->time_to_eat);
+	philo->last_eat = get_time();
+	if (philo->required_meals != -1)
+	{
+		philo->meal_counter++;
+		if (philo->meal_counter == philo->required_meals)
+			sem_post(philo->all->eat_sem);
+	}
 //	pthread_mutex_unlock(philo->l_fork);
 //	pthread_mutex_unlock(philo->r_fork);
-//}
-//
-//void	sleeping(t_param	*philo)
-//{
-//	message(philo, SLEEP);
-//	ft_msleep(philo->time_to_sleep);
-//}
-//
+	sem_post(philo->all->fork_sem);
+	sem_post(philo->all->fork_sem);
+}
+
+void	sleeping(t_param	*philo)
+{
+	message(philo, SLEEP);
+	ft_msleep(philo->time_to_sleep);
+}
+
 void	thinking(t_param	*philo)
 {
 	message(philo, THINK);
@@ -68,14 +78,13 @@ void	thinking(t_param	*philo)
 
 int	life(t_param philo)
 {
-	printf("342345\n");
 	//fixme проверить приходит ли структура правильно
 	if (philo.id % 2 == 0)
 		usleep(100); //todo посмотреть не опасно ли юзать, мона отправлятьспать
 	while (philo.alive == 0)
 	{
-//		eating(philo);
-//		sleeping(philo);
+		eating(&philo);
+		sleeping(&philo);
 		thinking(&philo);
 	}
 	return (EXIT_FAILURE);

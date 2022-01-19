@@ -25,6 +25,7 @@ void	parse_args(t_philos	*all, int argc, char **argv, int i)
 		all->body[i].required_meals = -1;
 	all->body[i].last_eat = get_time();
 	all->body[i].pid = -2;
+	all->body[i].all = all;
 	/// вилка уже не назначается
 //	all->body[i].l_fork = &all->fork[i];
 //	all->body[i].r_fork = &all->fork[(i + 1) % all->numb_of_philos];
@@ -53,36 +54,39 @@ int	init_philos(int argc, char **argv, t_philos	*all)
 	all->body = (t_param *) malloc(sizeof(t_param) * all->numb_of_philos);
 	if (all->body == NULL)
 		return (EXIT_FAILURE);
-	/// семафор на кол-во вилок(филов)
-	all->fork_sem = sem_open("/forks", O_CREAT, 0666, all->numb_of_philos);
+	sem_unlink("/forks");
+	all->fork_sem = sem_open("/forks", O_CREAT, 0777, all->numb_of_philos);
 	if (all->fork_sem == SEM_FAILED)
 		return (error("Failed to open semaphore for forks\n"));
-//	all->fork = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t)
-//			* all->numb_of_philos);
-	//todo для всех остальных нужно при ошибке закрывать семафор уже созданный
-
 	i = 0;
-
-	//todo семафор один на печать
-	sem_unlink("/write"); ///это что-то важное
+	sem_unlink("/write");
 	all->write_sem = sem_open("/write", O_CREAT, 0777, 1);
 	if (all->write_sem == SEM_FAILED)
 	{
 		sem_close(all->fork_sem);
 		return (error("Failed to open semaphore for write\n"));
 	}
-	//	pthread_mutex_init(&all->write_text, NULL);
-
-	//todo fork на кол-во филов
+	sem_unlink("/finish_sem");
+	all->finish_sem = sem_open("/finish_sem", O_CREAT, 0777, 0);
+	if (all->finish_sem == SEM_FAILED)
+	{
+		sem_close(all->fork_sem);
+		sem_close(all->write_sem);
+		return (error("Failed to open semaphore for finish\n"));
+	}
+	sem_unlink("/eat_sem");
+	all->eat_sem = sem_open("/eat_sem", O_CREAT, 0777, 0);
+	if (all->eat_sem == SEM_FAILED)
+	{
+		sem_close(all->fork_sem);
+		sem_close(all->write_sem);
+		sem_close(all->finish_sem);
+		return (error("Failed to open semaphore for eat\n"));
+	}
 	while (i < all->numb_of_philos)
 	{
-//		pthread_mutex_init(&all->fork[i], NULL);
-		parse_args(all, argc, argv, i++); ///
+		parse_args(all, argc, argv, i++);
 	}
-
-//	i = 0;
-//	while (i < all->numb_of_philos)
-//		wait(NULL), i++;
 	if (validate_params(argc, all))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);

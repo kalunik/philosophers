@@ -12,7 +12,6 @@
 
 #include "philo_b.h"
 
-/*
 static inline int	is_alive(int i, t_philos *all)
 {
 	if (all->body[i].alive == 0 && get_time() - all->body[i].last_eat
@@ -25,33 +24,40 @@ static inline int	is_alive(int i, t_philos *all)
 	return (2);
 }
 
-int	monitor(t_philos *all)
+void	*monit_eat(void *args)
 {
 	int	i;
 	int	count;
+	t_param	*philo;
 
 	i = 0;
 	count = 0;
+	philo = (t_param *)args;
+
 	while (1)
 	{
-		while (i < all->numb_of_philos)
-		{
-			if (is_alive(i, all) == EXIT_SUCCESS)
-				return (EXIT_SUCCESS);
-			if (all->body[i].meal_counter >= all->body->required_meals
-				&& all->body->required_meals != -1)
-			{
-				count++;
-				if (count == all->numb_of_philos)
-					return (EXIT_SUCCESS);
-			}
-			i++;
-		}
-		i = 0;
-		count = 0;
+		printf("[%d] -- time %d\n", philo->id,philo->all->body->time_to_die);
+		sem_wait(philo->all->eat_sem);
+		count++;
+
+		if (count == philo->all->numb_of_philos)
+			exit (EXIT_SUCCESS);
+//			if (is_alive(i, philo->all) == EXIT_SUCCESS)
+//				return (EXIT_SUCCESS);
+//			if (philo->meal_counter >= philo->required_meals
+//				&& philo->required_meals != -1)
+//			{
+//				count++;
+//				if (count == all->numb_of_philos)
+//					return (EXIT_SUCCESS);
+//			}
+//			i++;
+//		}
+//		i = 0;
+//		count = 0;
 	}
+	return (NULL);
 }
-*/
 
 int	born_philos(t_philos	*all)
 {
@@ -60,10 +66,12 @@ int	born_philos(t_philos	*all)
 
 	i = 0;
 	bool = EXIT_FAILURE;
-	printf("%p\n", &all->write_sem); //fixme неправильно приходит указательна семафор
+//	printf("%p\n", &all->write_sem); //fixme неправильно приходит указательна семафор
+
 	while (i < all->numb_of_philos)
 	{
 		all->body[i].start_time = get_time();
+
 		//pthread_create(&all->body[i].philo_t, NULL, life, &all->body[i]);
 		//todo на каждого философа процесс
 		all->body[i].pid = fork();
@@ -74,12 +82,15 @@ int	born_philos(t_philos	*all)
 		{
 			printf("[son - %d] pid %d from [parent] pid %d\n",i, getpid(),
 				   getppid());
+			if (all->body->required_meals != -1)
+				pthread_create(&all->body[i].monit_eat, NULL, monit_eat,&all->body[i]);
 			exit(life(all->body[i]));
 		}
 		i++;
 	}
-/*	bool = monitor(all);
-	i = 0;
+//	printf("!!!!! ---- %d\n", i);
+//	bool = monitor(all);
+/*	i = 0;
 	while (i < all->numb_of_philos)
 	{
 		pthread_detach(all->body[i].philo_t);
@@ -90,13 +101,21 @@ int	born_philos(t_philos	*all)
 	waitpid(all->body[1].pid, NULL, 0);
 	waitpid(all->body[2].pid, NULL, 0);
 */
-	i = 0;
+/*	i = 0; //fixme it looks there is no need 'cause exit in every process
 	while (i < all->numb_of_philos)
 	{
 
 		//kill();
-		wait(NULL);
-//		waitpid(all->body[i].pid, NULL, 0);
+		//wait(NULL);
+		waitpid(all->body[i].pid, NULL, 0);
+		i++;
+	}*/
+	printf("!!!!! ---- %d\n", i);
+	sem_wait(all->finish_sem);
+	i = 0;
+	while (i < all->numb_of_philos)
+	{
+		kill(all->body[i].pid, SIGQUIT);
 		i++;
 	}
 	if (i != all->numb_of_philos)

@@ -15,7 +15,7 @@ all:
 
 $(NAME_B):	$(OBJS_B)
 			@$(CC) -o $(NAME_B) $(OBJS_B)
-			@echo "philo is ready to use ✅ "
+			@echo "philo_bonus is ready to use ✅ "
 
 %.o: %.c	philo_b.h
 			@$(CC) $(CFLAGS) -c $< -o $@

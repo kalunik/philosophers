@@ -41,15 +41,11 @@ void	message(t_param *philo, const char *text)
 
 void	eating(t_param	*philo)
 {
-//	pthread_mutex_lock(philo->l_fork);
 	sem_wait(philo->all->fork_sem);
-
+	message(philo, TAKE_FORK);
+	sem_wait(philo->all->fork_sem);
 	message(philo, TAKE_FORK);
 
-//	pthread_mutex_lock(philo->r_fork);
-	sem_wait(philo->all->fork_sem);
-
-	message(philo, TAKE_FORK);
 	message(philo, EAT);
 	ft_msleep(philo->time_to_eat);
 	philo->last_eat = get_time();
@@ -76,16 +72,78 @@ void	thinking(t_param	*philo)
 	message(philo, THINK);
 }
 
-int	life(t_param philo)
+void	*death(void *args)
 {
-	//fixme проверить приходит ли структура правильно
-	if (philo.id % 2 == 0)
-		usleep(100); //todo посмотреть не опасно ли юзать, мона отправлятьспать
-	while (philo.alive == 0)
+	t_param	*philo;
+
+	philo = (t_param *)args;
+	while (1)
 	{
-		eating(&philo);
-		sleeping(&philo);
-		thinking(&philo);
+		int time;
+		time = get_time() - philo->last_eat;
+		if (philo->alive == 0 && get_time() - philo->last_eat >= philo->time_to_die)
+		{
+			printf("%d - time to eat || id %d\n", time, philo->id);
+			philo->alive = 1;
+			message(philo, DIE);
+			sem_post(philo->all->finish_sem);
+			return (NULL);
+		}
+	}
+}
+
+void	*monit_eat(void *args)
+{
+	int	i;
+	int	count;
+	t_param	*philo;
+
+	i = 0;
+	count = 0;
+	philo = (t_param *)args;
+
+	while (1)
+	{
+		while (i < philo->all->numb_of_philos)
+		{
+			printf("i - %d ||[%d] -- time %d\n",i, philo->id,
+				   philo->all->body->time_to_die);
+			sem_wait(philo->all->eat_sem);
+			i++;
+		}
+		printf("i - %d ||[%d] -- time %d\n",i, philo->id,
+			   philo->all->body->time_to_die);
+//		if (count == philo->all->numb_of_philos)
+		exit (EXIT_SUCCESS);
+//			if (is_alive(i, philo->all) == EXIT_SUCCESS)
+//				return (EXIT_SUCCESS);
+//			if (philo->meal_counter >= philo->required_meals
+//				&& philo->required_meals != -1)
+//			{
+//				count++;
+//				if (count == all->numb_of_philos)
+//					return (EXIT_SUCCESS);
+//			}
+//			i++;
+//		}
+//		i = 0;
+//		count = 0;
+	}
+	return (NULL);
+}
+
+int	life(t_param *philo)
+{
+	pthread_create(&philo->death, NULL, death, philo);
+	/*if (philo.required_meals != -1)
+		pthread_create(&philo.monit_eat, NULL, monit_eat,&philo);*/
+//	if (philo.id % 2 == 0)
+//		usleep(100); //todo посмотреть не опасно ли юзать, мона отправлятьспать
+	while (philo->alive == 0)
+	{
+		eating(philo);
+		sleeping(philo);
+		thinking(philo);
 	}
 	return (EXIT_FAILURE);
 }

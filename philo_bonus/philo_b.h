@@ -46,7 +46,7 @@ typedef struct s_args{
 //	pthread_mutex_t	*l_fork;
 //	pthread_mutex_t	*r_fork;
 //	pthread_mutex_t	*write_text;
-//	pthread_t		philo_t;
+	pthread_t		death;
 	pthread_t		monit_eat;
 	pid_t			pid;
 	struct s_main	*all;
@@ -67,7 +67,7 @@ typedef struct s_main{
 int		ft_atoi(const char *str);
 
 void	message(t_param *philo, const char *text);
-int		life(t_param philo);
+int		life(t_param *philo);
 
 int		init_philos(int argc, char **argv, t_philos *all);
 

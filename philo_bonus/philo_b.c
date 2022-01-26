@@ -24,40 +24,8 @@ static inline int	is_alive(int i, t_philos *all)
 	return (2);
 }
 
-void	*monit_eat(void *args)
-{
-	int	i;
-	int	count;
-	t_param	*philo;
 
-	i = 0;
-	count = 0;
-	philo = (t_param *)args;
 
-	while (1)
-	{
-		printf("[%d] -- time %d\n", philo->id,philo->all->body->time_to_die);
-		sem_wait(philo->all->eat_sem);
-		count++;
-
-		if (count == philo->all->numb_of_philos)
-			exit (EXIT_SUCCESS);
-//			if (is_alive(i, philo->all) == EXIT_SUCCESS)
-//				return (EXIT_SUCCESS);
-//			if (philo->meal_counter >= philo->required_meals
-//				&& philo->required_meals != -1)
-//			{
-//				count++;
-//				if (count == all->numb_of_philos)
-//					return (EXIT_SUCCESS);
-//			}
-//			i++;
-//		}
-//		i = 0;
-//		count = 0;
-	}
-	return (NULL);
-}
 
 int	born_philos(t_philos	*all)
 {
@@ -66,7 +34,6 @@ int	born_philos(t_philos	*all)
 
 	i = 0;
 	bool = EXIT_FAILURE;
-//	printf("%p\n", &all->write_sem); //fixme неправильно приходит указательна семафор
 
 	while (i < all->numb_of_philos)
 	{
@@ -77,14 +44,11 @@ int	born_philos(t_philos	*all)
 		all->body[i].pid = fork();
 		if (all->body[i].pid == -1)
 			exit(error("Child process isn't created\n"));
-//		printf("%d");
 		if (all->body[i].pid == 0)
 		{
-			printf("[son - %d] pid %d from [parent] pid %d\n",i, getpid(),
-				   getppid());
-			if (all->body->required_meals != -1)
-				pthread_create(&all->body[i].monit_eat, NULL, monit_eat,&all->body[i]);
-			exit(life(all->body[i]));
+			/*printf("[son - %d] pid %d from [parent] pid %d\n",i, getpid(),
+				   getppid());*/
+			exit(life(&all->body[i]));
 		}
 		i++;
 	}
@@ -110,7 +74,7 @@ int	born_philos(t_philos	*all)
 		waitpid(all->body[i].pid, NULL, 0);
 		i++;
 	}*/
-	printf("!!!!! ---- %d\n", i);
+//	printf("!!!!! ---- %d\n", i);
 	sem_wait(all->finish_sem);
 	i = 0;
 	while (i < all->numb_of_philos)

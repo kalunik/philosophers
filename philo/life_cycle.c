@@ -19,15 +19,15 @@ void	message(t_param *philo, const char *text)
 	text_size = ft_strlen(text);
 	pthread_mutex_lock(philo->write_text);
 	printf("%ld", get_time() - philo->start_time);
-	if (text_size == TAKE_FORK_TEXT_SIZE)
+	/*if (text_size == TAKE_FORK_TEXT_SIZE)
 		printf("\033[0;36m");
 	else if (text_size == EAT_TEXT_SIZE)
 		printf("\033[1;34m");
 	else if (text_size == DIE_TEXT_SIZE)
-		printf("\033[1;31m");
+		printf("\033[1;31m");*/
 	printf(" %d %s\n", philo->id, text);
-	if (text_size != UNUSED_TEXT_SIZE)
-		printf("\033[0m");
+	/*if (text_size != UNUSED_TEXT_SIZE)
+		printf("\033[0m");*/
 	if (ft_strlen(text) != DIE_TEXT_SIZE)
 		pthread_mutex_unlock(philo->write_text);
 }

@@ -83,6 +83,17 @@ int	init_philos(int argc, char **argv, t_philos	*all)
 		sem_close(all->finish_sem);
 		return (error("Failed to open semaphore for eat\n"));
 	}
+	sem_unlink("/death_sem");
+	all->death_sem = sem_open("/death_sem", O_CREAT, 0777, 0);
+	if (all->death_sem == SEM_FAILED)
+	{
+		sem_close(all->fork_sem);
+		sem_close(all->write_sem);
+		sem_close(all->finish_sem);
+		sem_close(all->eat_sem);
+		return (error("Failed to open semaphore for death\n"));
+	}
+	all->someone_dead = 0; /// todo delete
 	while (i < all->numb_of_philos)
 	{
 		parse_args(all, argc, argv, i++);

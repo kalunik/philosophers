@@ -53,10 +53,26 @@ void	eating(t_param	*philo)
 	{
 		philo->meal_counter++;
 		if (philo->meal_counter == philo->required_meals)
+		{
 			sem_post(philo->all->eat_sem);
+			//printf("^^^^^\n");
+		}
 	}
-//	pthread_mutex_unlock(philo->l_fork);
-//	pthread_mutex_unlock(philo->r_fork);
+	/*if (philo->required_meals != -1)
+	{
+		philo->meal_counter++;
+		if (philo->meal_counter == philo->required_meals)
+		{
+			philo->all->thirsty_philos--;
+			printf("AAAAAAAAAA\n");
+		}
+		printf("%d ?= %d ^^^^^%d\n",philo->meal_counter, philo->required_meals,
+			   philo->all->thirsty_philos);
+		if(!philo->all->thirsty_philos)
+			sem_post(philo->all->finish_sem);
+//		if (philo->meal_counter == philo->required_meals)
+//			sem_post(philo->all->eat_sem);
+	}*/
 	sem_post(philo->all->fork_sem);
 	sem_post(philo->all->fork_sem);
 }
@@ -83,8 +99,9 @@ void	*death(void *args)
 		time = get_time() - philo->last_eat;
 		if (philo->alive == 0 && get_time() - philo->last_eat >= philo->time_to_die)
 		{
-			printf("%d - time to eat || id %d\n", time, philo->id);
+//			printf("%d - time to eat || id %d\n", time, philo->id);
 			philo->alive = 1;
+			philo->all->someone_dead = 1; //todo delete
 			message(philo, DIE);
 			sem_post(philo->all->finish_sem);
 			return (NULL);
@@ -94,51 +111,23 @@ void	*death(void *args)
 
 void	*monit_eat(void *args)
 {
-	int	i;
-	int	count;
-	t_param	*philo;
+	int i;
+	t_philos	*all;
 
 	i = 0;
-	count = 0;
-	philo = (t_param *)args;
-
-	while (1)
+	all = (t_philos *)args;
+	while (i < all->numb_of_philos - 1 )
 	{
-		while (i < philo->all->numb_of_philos)
-		{
-			printf("i - %d ||[%d] -- time %d\n",i, philo->id,
-				   philo->all->body->time_to_die);
-			sem_wait(philo->all->eat_sem);
-			i++;
-		}
-		printf("i - %d ||[%d] -- time %d\n",i, philo->id,
-			   philo->all->body->time_to_die);
-//		if (count == philo->all->numb_of_philos)
-		exit (EXIT_SUCCESS);
-//			if (is_alive(i, philo->all) == EXIT_SUCCESS)
-//				return (EXIT_SUCCESS);
-//			if (philo->meal_counter >= philo->required_meals
-//				&& philo->required_meals != -1)
-//			{
-//				count++;
-//				if (count == all->numb_of_philos)
-//					return (EXIT_SUCCESS);
-//			}
-//			i++;
-//		}
-//		i = 0;
-//		count = 0;
+		sem_wait(all->eat_sem);
+		i++;
 	}
+	sem_post(all->finish_sem);
 	return (NULL);
 }
 
 int	life(t_param *philo)
 {
 	pthread_create(&philo->death, NULL, death, philo);
-	/*if (philo.required_meals != -1)
-		pthread_create(&philo.monit_eat, NULL, monit_eat,&philo);*/
-//	if (philo.id % 2 == 0)
-//		usleep(100); //todo посмотреть не опасно ли юзать, мона отправлятьспать
 	while (philo->alive == 0)
 	{
 		eating(philo);

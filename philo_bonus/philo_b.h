@@ -47,7 +47,6 @@ typedef struct s_args{
 //	pthread_mutex_t	*r_fork;
 //	pthread_mutex_t	*write_text;
 	pthread_t		death;
-	pthread_t		monit_eat;
 	pid_t			pid;
 	struct s_main	*all;
 }				t_param;
@@ -56,12 +55,15 @@ typedef struct s_main{
 //	pthread_mutex_t	*fork;
 //	pthread_mutex_t	write_text;
 	int				numb_of_philos;
+	int				someone_dead;
 	t_param			*body;
 	sem_t			*fork_sem;
 	sem_t			*write_sem;
 	sem_t			*finish_sem;
+	sem_t			*death_sem;
 	sem_t			*eat_sem;
 	//pthread_t		monitor;
+	pthread_t		monit_eat;
 }					t_philos;
 
 int		ft_atoi(const char *str);
@@ -70,6 +72,8 @@ void	message(t_param *philo, const char *text);
 int		life(t_param *philo);
 
 int		init_philos(int argc, char **argv, t_philos *all);
+
+void	*monit_eat(void *args);
 
 int		error(char *msg);
 long	get_time(void);

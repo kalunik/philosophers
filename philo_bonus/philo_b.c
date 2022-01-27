@@ -48,7 +48,8 @@ int	born_philos(t_philos	*all)
 		{
 			/*printf("[son - %d] pid %d from [parent] pid %d\n",i, getpid(),
 				   getppid());*/
-			exit(life(&all->body[i]));
+			life(&all->body[i]);
+			exit(0);
 		}
 		i++;
 	}
@@ -75,11 +76,16 @@ int	born_philos(t_philos	*all)
 		i++;
 	}*/
 //	printf("!!!!! ---- %d\n", i);
+//	if (all->body[i].required_meals == -1)
+//		sem_wait(all->eat_sem);
+//	else
+	if (all->body[i].required_meals != -1)
+		pthread_create(&all->monit_eat, NULL, monit_eat, all);
 	sem_wait(all->finish_sem);
 	i = 0;
 	while (i < all->numb_of_philos)
 	{
-		kill(all->body[i].pid, SIGQUIT);
+		kill(all->body[i].pid, SIGTERM); //sigterm better
 		i++;
 	}
 	if (i != all->numb_of_philos)

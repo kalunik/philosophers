@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_b.h"
+#include "philo_bonus.h"
 
-int		error(char *msg)
+int	error(char *msg)
 {
 	printf("%s\n", msg);
 	return (EXIT_FAILURE);
@@ -38,29 +38,3 @@ void	ft_msleep(long ms)
 	while (get_time() < begin + ms)
 		usleep(ms * 3);
 }
-
-size_t	ft_strlen(const char *s)
-{
-	size_t	len;
-
-	len = 0;
-	while (s[len])
-		len++;
-	return (len);
-}
-//
-//void	end_threads(t_philos	*all)
-//{
-//	int	i;
-//
-//	i = 0;
-//	while (i < all->numb_of_philos)
-//	{
-//		pthread_mutex_destroy(&all->fork[i]);
-//		i++;
-//	}
-//	pthread_mutex_destroy(&all->write_text);
-//	free(all->body);
-//	free(all->fork);
-//	free(all);
-//}

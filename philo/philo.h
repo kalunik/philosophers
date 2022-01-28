@@ -20,13 +20,12 @@
 # include <sys/time.h> //gettimeofday
 # include <pthread.h>//pthread_create|detach|join,mutex_init|destroy|lock|unlock
 
-# define TAKE_FORK_L "has taken a fork L"
-# define TAKE_FORK_R "has taken a fork R"
+# define TAKE_FORK "has taken a fork"
 # define EAT "is eating"
 # define SLEEP "is sleeping"
 # define THINK "is thinking"
 # define DIE "died"
-# define TAKE_FORK_TEXT_SIZE 18
+# define TAKE_FORK_TEXT_SIZE 16
 # define EAT_TEXT_SIZE 9
 # define DIE_TEXT_SIZE 4
 # define UNUSED_TEXT_SIZE 11

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_b.h"
+#include "philo_bonus.h"
 
 void	parse_args(t_philos	*all, int argc, char **argv, int i)
 {
@@ -26,12 +26,6 @@ void	parse_args(t_philos	*all, int argc, char **argv, int i)
 	all->body[i].last_eat = get_time();
 	all->body[i].pid = -2;
 	all->body[i].all = all;
-	/// вилка уже не назначается
-//	all->body[i].l_fork = &all->fork[i];
-//	all->body[i].r_fork = &all->fork[(i + 1) % all->numb_of_philos];
-
-	/// todo сем на письмо
-//	all->body[i].write_text = &all->write_text;
 }
 
 static inline int	validate_params(int argc, t_philos	*all)
@@ -43,61 +37,63 @@ static inline int	validate_params(int argc, t_philos	*all)
 	return (EXIT_SUCCESS);
 }
 
+static inline void	*philo_sem_open_1(t_philos	*all)
+{
+	sem_unlink("/forks");
+	all->fork_sem = sem_open("/forks", O_CREAT, 0, all->numb_of_philos);
+	if (all->fork_sem == SEM_FAILED)
+		exit (error("Failed to open semaphore for forks\n"));
+	sem_unlink("/forks");
+	sem_unlink("/write");
+	all->write_sem = sem_open("/write", O_CREAT | O_EXCL, 0, 1);
+	if (all->write_sem == SEM_FAILED)
+	{
+		sem_close(all->fork_sem);
+		exit (error("Failed to open semaphore for write\n"));
+	}
+	sem_unlink("/write");
+	return (EXIT_SUCCESS);
+}
+
+static inline void	*philo_sem_open_2(t_philos	*all)
+{
+	sem_unlink("/finish_sem");
+	all->finish_sem = sem_open("/finish_sem", O_CREAT | O_EXCL, 0, 0);
+	if (all->finish_sem == SEM_FAILED)
+	{
+		sem_close(all->fork_sem);
+		sem_close(all->write_sem);
+		exit (error("Failed to open semaphore for finish\n"));
+	}
+	sem_unlink("/finish_sem");
+	sem_unlink("/eat_sem");
+	all->eat_sem = sem_open("/eat_sem", O_CREAT | O_EXCL, 0, 0);
+	if (all->eat_sem == SEM_FAILED)
+	{
+		sem_close(all->fork_sem);
+		sem_close(all->write_sem);
+		sem_close(all->finish_sem);
+		exit (error("Failed to open semaphore for eat\n"));
+	}
+	sem_unlink("/eat_sem");
+	return (EXIT_SUCCESS);
+}
 
 int	init_philos(int argc, char **argv, t_philos	*all)
 {
-	int i;
+	int	i;
 
 	if (!(argc == 5 || argc == 6))
 		return (error("There should be 4 or 5 arguments\n"));
 	all->numb_of_philos = ft_atoi((argv[1]));
 	all->body = (t_param *) malloc(sizeof(t_param) * all->numb_of_philos);
 	if (all->body == NULL)
-		return (EXIT_FAILURE);
-	sem_unlink("/forks");
-	all->fork_sem = sem_open("/forks", O_CREAT, 0777, all->numb_of_philos);
-	if (all->fork_sem == SEM_FAILED)
-		return (error("Failed to open semaphore for forks\n"));
+		exit (error("Can't malloc for body"));
+	philo_sem_open_1(all);
+	philo_sem_open_2(all);
 	i = 0;
-	sem_unlink("/write");
-	all->write_sem = sem_open("/write", O_CREAT, 0777, 1);
-	if (all->write_sem == SEM_FAILED)
-	{
-		sem_close(all->fork_sem);
-		return (error("Failed to open semaphore for write\n"));
-	}
-	sem_unlink("/finish_sem");
-	all->finish_sem = sem_open("/finish_sem", O_CREAT, 0777, 0);
-	if (all->finish_sem == SEM_FAILED)
-	{
-		sem_close(all->fork_sem);
-		sem_close(all->write_sem);
-		return (error("Failed to open semaphore for finish\n"));
-	}
-	sem_unlink("/eat_sem");
-	all->eat_sem = sem_open("/eat_sem", O_CREAT, 0777, 0);
-	if (all->eat_sem == SEM_FAILED)
-	{
-		sem_close(all->fork_sem);
-		sem_close(all->write_sem);
-		sem_close(all->finish_sem);
-		return (error("Failed to open semaphore for eat\n"));
-	}
-	sem_unlink("/death_sem");
-	all->death_sem = sem_open("/death_sem", O_CREAT, 0777, 0);
-	if (all->death_sem == SEM_FAILED)
-	{
-		sem_close(all->fork_sem);
-		sem_close(all->write_sem);
-		sem_close(all->finish_sem);
-		sem_close(all->eat_sem);
-		return (error("Failed to open semaphore for death\n"));
-	}
-	all->someone_dead = 0; /// todo delete
 	while (i < all->numb_of_philos)
-	{
 		parse_args(all, argc, argv, i++);
-	}
 	if (validate_params(argc, all))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);

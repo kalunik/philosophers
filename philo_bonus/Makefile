@@ -1,23 +1,27 @@
 CC	=	gcc
 RM	=	rm -f
-CFLAGS	=	-I. -ggdb3 -Wall -Wextra -Werror
+CFLAGS	=	-I. -Wall -Wextra -Werror
 NAME_B	=	philo_bonus
-SRCS_B	=	philo_b.c \
+SRCS_B	=	philo_bonus.c \
             ft_atoi.c \
-            life_cycle_b.c \
-            parse_args_b.c \
-            utils_b.c
+            life_cycle_bonus.c \
+            monitoring.c \
+            parse_args_bonus.c \
+            utils_bonus.c
 
 OBJS_B	=	$(patsubst %.c, %.o, $(SRCS_B))
 
 all:
 			@$(MAKE) $(NAME_B)
 
+bonus:
+			@$(MAKE) $(NAME_B)
+
 $(NAME_B):	$(OBJS_B)
 			@$(CC) -o $(NAME_B) $(OBJS_B)
 			@echo "philo_bonus is ready to use ✅ "
 
-%.o: %.c	philo_b.h
+%.o: %.c	philo_bonus.h
 			@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:

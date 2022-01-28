@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_b.h"
+#include "philo_bonus.h"
 
 static int	ft_is_space(char s)
 {

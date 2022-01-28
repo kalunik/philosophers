@@ -13,25 +13,20 @@
 #ifndef PHILO_B_H
 # define PHILO_B_H
 
-# include <string.h> //memset
-# include <stdio.h> //printf
-# include <stdlib.h> //malloc free
-# include <unistd.h> //write usleep
-# include <sys/time.h> //gettimeofday
-//todo delete pthread
-# include <pthread.h>///pthread_create|detach|join,mutex_init|destroy|lock|unlock
+# include <string.h>	//memset
+# include <stdio.h>		//printf
+# include <stdlib.h>	//malloc free
+# include <unistd.h>	//write usleep
+# include <sys/time.h>	//gettimeofday
+# include <pthread.h>	//pthread_create|detach
 # include <semaphore.h>
-#include <signal.h>
+# include <signal.h>
 
-# define TAKE_FORK "has taken a fork"
-# define EAT "is eating"
-# define SLEEP "is sleeping"
-# define THINK "is thinking"
-# define DIE "died"
-# define TAKE_FORK_TEXT_SIZE 16
-# define EAT_TEXT_SIZE 9
-# define DIE_TEXT_SIZE 4
-# define UNUSED_TEXT_SIZE 11
+# define TAKE_FORK	"has taken a fork"
+# define EAT		"is eating"
+# define SLEEP		"is sleeping"
+# define THINK		"is thinking"
+# define DIE		"died"
 
 typedef struct s_args{
 	int				id;
@@ -43,26 +38,18 @@ typedef struct s_args{
 	long			last_eat;
 	int				meal_counter;
 	int				alive;
-//	pthread_mutex_t	*l_fork;
-//	pthread_mutex_t	*r_fork;
-//	pthread_mutex_t	*write_text;
 	pthread_t		death;
 	pid_t			pid;
 	struct s_main	*all;
 }				t_param;
 
 typedef struct s_main{
-//	pthread_mutex_t	*fork;
-//	pthread_mutex_t	write_text;
 	int				numb_of_philos;
-	int				someone_dead;
 	t_param			*body;
 	sem_t			*fork_sem;
 	sem_t			*write_sem;
 	sem_t			*finish_sem;
-	sem_t			*death_sem;
 	sem_t			*eat_sem;
-	//pthread_t		monitor;
 	pthread_t		monit_eat;
 }					t_philos;
 
@@ -73,12 +60,11 @@ int		life(t_param *philo);
 
 int		init_philos(int argc, char **argv, t_philos *all);
 
+void	*death(void *args);
 void	*monit_eat(void *args);
 
 int		error(char *msg);
 long	get_time(void);
 void	ft_msleep(long ms);
-size_t	ft_strlen(const char *s);
-void	end_threads(t_philos	*all);
 
 #endif
